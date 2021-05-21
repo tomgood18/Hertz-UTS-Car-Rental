@@ -1,0 +1,107 @@
+<!DOCTYPE html> 
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+<head> 
+    
+      
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+    <link rel="stylesheet" href="style.css" />
+    <title>Hertz-UTS</title> 
+  
+  
+</head> 
+<body> 
+    <div class="topnav">
+        <a class="right" href="index.html">
+            Back
+        </a>
+    </div>
+    <center><h2>Car Reservation</h2>
+    <!-- Reserved cars div retrieved from session -->
+    <div class="reservation"> 
+        <div class="title">
+            <h3>Thumbnail</h3>
+            <h3>Vehicle</h3>
+            <h3>Price/day</h3>
+            <h3>Rental days</h3>
+            <h3>Actions</h3>
+        </div>
+    </div>
+    
+    </center>
+    
+    <button class="button button-check" onClick="checkout()"><b>Proceed to Checkout</b></button>
+
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    let total_cart=0;
+    let reservation;
+    $(document).ready(function() {
+        // Retrieve cars from session_res created in index
+        reservation = JSON.parse(sessionStorage.getItem('session_res'));
+        if (reservation.length > 0) {
+            
+        
+            for (let x=0; x<reservation.length; x++) {
+                // Create car component for each reserved car
+                let resComponent = 
+                `
+                    <div class="car-item" id="${reservation[x].id}">
+                        <div class="car-img-container"><img style="width:162px;height:122px;" src=${reservation[x].img} alt="${reservation[x].brand} ${reservation[x].model}"></div>
+                        <div><p>${reservation[x].brand} ${reservation[x].model} (${reservation[x].model_year})</p></div>
+                        <div><p>$${reservation[x].price_per_day}</p></div>
+                        <div><input value="1" min="0" type="number" id="car-input-${reservation[x].id}" class="car-input"></div>
+                        <div><button class="button button-delete" onClick="deleteItem(${reservation[x].id})"><b>Delete</b></button></div>
+                     </div>
+                `;
+                // Append each reserved car to reservation div used in body
+                $(".reservation").append(resComponent);
+                
+            }
+        } else {
+            let emptyComponent = '<h2>No cars have been selected</h2>';
+            $(".reservation").append(emptyComponent);
+        }
+    });
+    
+    function deleteItem(id){
+        // Remove item from reserved cars array and session
+        reservation = reservation.filter(car => car.id != id);
+        window.sessionStorage.setItem('session_res', JSON.stringify(reservation));
+        document.getElementById(`${id}`).innerHTML = "";
+        if (reservation.length < 1) {
+            // If no more cars in reservation, go back to home page.
+            window.location.href="index.html";
+        }
+    }
+    
+    function checkout(){
+        if(reservation.length <= 0){ // If no cars in reservation after pressing checkout button, alert user and return back to home page.
+            alert("No car has been reserved!");
+            window.location.href="index.html";
+        } else {
+            let inputClasses = document.getElementsByClassName(`car-input`);
+            let value = validate(inputClasses);
+            if(value){
+                window.location.href=`checkout.html`;
+                window.sessionStorage.setItem("session_total", value); // Create new session_total and store total price for checkout
+            }
+        }
+    }
+    
+    function validate(input){
+        let total = 0;
+        for(let i=0; i < input.length; i++) {
+            if(input[i].value <= 0 || !input[i].value){ // If rental days are less than or equal to 0, show error
+                alert(`Please make sure that rental days are valid!`);
+                return false;
+            } else {
+                let car = reservation.find(car => input[i].id.split('-')[2] == car.id );
+                total += input[i].value * car.price_per_day; // Tally up total cost for checkout
+            }
+        }
+        return total;
+    }
+    
+    </script>

@@ -1,0 +1,169 @@
+<html>
+    <link rel="stylesheet" href="style.css" /> 
+    <head><title>Checkout</title>
+    </head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    
+        let cart;
+        $(document).ready(function(){
+            let total = window.sessionStorage.getItem("session_total"); // Set total cost
+            $(".total").append(`<h3 style="padding-left:25">Total: $${total}</h3>`);
+        });
+        
+        function completeBooking(){
+            let regex = /\S+@\S+\.\S+/; // Checks for correct email format
+            
+            // Checks values of input to see if valid or not
+            let firstname = document.getElementById("firstname").value;
+            let lastname = document.getElementById("lastname").value;
+            let email = document.getElementById("email").value;
+            let address1 = document.getElementById("address1").value;
+            let city = document.getElementById("city").value;
+            let postcode = document.getElementById("postcode").value;
+            if (firstname == "") {
+                alert("First name is empty");
+            } else if (lastname == "") {
+                alert("Last name is empty");
+            } else if (email == "") {
+                alert("Email Address is empty");
+            } else if (address1 == "") {
+                alert("Address is empty");
+            } else if (city == "") {
+                alert("City is empty");
+            } else if (postcode == "") {
+                alert("Post Code is empty");
+            } else if(regex.test(email)){
+                alert("Booking complete");
+                window.location.href="index.html"; // Returns to home page
+                window.sessionStorage.clear(); // Clears session after successful checkout for next time.
+            } else {
+                alert("Invalid email!"); // Email doesnt meet regex format test
+            }
+        }
+        
+    </script>
+    <body>
+        
+        <div class="topnav-checkout">
+            <a><b>Hertz-UTS</b></a>
+        </div>
+        
+        <center><h1>Checkout</h1></center>
+        <h2 style="padding-left:25" ><b>Customer Details and Payment</b></h2>
+        <h3 style="padding-left:25" >Please fill in your details.  <span style="color:red">*</span> indicates required field.</h3>
+        
+        <center>
+            <table>
+                    <tr>
+                        <td>
+                            <span style="color:red">*</span> First Name
+                        </td>
+                        <td>
+                            <input type="text" id="firstname" name="firstname" width="20"><br>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            <span style="color:red">*</span> Last Name
+                        </td>
+                        <td>
+                            <input type="text" id="lastname" name="lastname" width="20"><br>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            <span style="color:red">*</span> Email Address
+                        </td>
+                        <td>
+                            <input type="email" id="email" name="email" width="20"><br>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            <span style="color:red">*</span> Address Line 1
+                        </td>
+                        <td>
+                            <input type="text" id="address1" name="address1" width="20"><br>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            Address Line 2
+                        </td>
+                        <td>
+                            <input type="text" id="address2" name="address2" width="20"><br>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            <span style="color:red">*</span> City
+                        </td>
+                        <td>
+                            <input type="text" id="city" name="city" width="20"><br>
+                        </td>
+                    </tr>
+                        
+                    <tr>
+                        <td>
+                            <span style="color:red">*</span> State
+                        </td>
+                        <td>
+
+                            <select width="20" name="state" id="state">
+                              <option value="nsw">New South Wales</option>
+                              <option value="qld">Queensland</option>
+                              <option value="sa">South Australia</option>
+                              <option value="tas">Tasmania</option>
+                              <option value="vic">Victoria</option>
+                              <option value="wa">Western Australia</option>
+                            </select>
+                            
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            <span style="color:red">*</span> Post Code
+                        </td>
+                        <td>
+                            <input type="text" id="postcode" name="postcode" width="20"><br>
+                        </td>
+                    </tr>
+                    
+                    
+                     <tr>
+                        <td>
+                            <span style="color:red">*</span> Payment Type
+                        </td>
+                        <td>
+
+                            <select width="20" name="payment" id="payment">
+                              <option value="visa">Visa</option>
+                              <option value="master">Mastercard</option>
+                              <option value="amex">American Express</option>
+                            </select>
+                        </td>
+                    </tr>
+                   
+                    
+            </table>
+            
+           
+            
+        </center>
+         <div class="total"></div>
+            
+            <center>
+                <div >
+                    <a href="reservation.html"><button class="button button-out">Back</button></a>
+                    <a><button class="button button-out" onClick="completeBooking()">Complete Booking</button></a>
+                </div>
+            </center>
+    </body>
+</html>

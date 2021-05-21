@@ -1,0 +1,81 @@
+<!DOCTYPE html> 
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+<head> 
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+    <link rel="stylesheet" href="style.css" />
+    <title>Hertz-UTS</title> 
+</head> 
+<body> 
+    <!-- Top Navigation Bar -->
+    <div class="topnav">
+        <a class="active" href="index.html">Hertz-UTS</a> <!-- Home Button -->
+        <a class="right" onClick="checkReservation()"> <!-- Reservation Button -->
+            Car Reservation
+        </a>
+    </div>
+    <center>
+        <h1>Hertz-UTS Car Rental</h1>
+    </center>
+    <!-- Array of cars retrieved from cars.json -->
+    <div class="car-list"></div>
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    
+    <script type="text/javascript">
+        let cars = [];
+        // Set the reservation session
+        let reservation = window.sessionStorage.getItem("session_res") ? JSON.parse(window.sessionStorage.getItem("session_res")) : [];
+        
+        $(document).ready(function(){
+            // Append car objects from json to cars array
+            $.getJSON("cars.json", function(result){
+                cars = result;
+              $.each(result, function(i, field){
+                  // Create card component for each car in array
+                  let carComponent = 
+                  `
+                    <div class="card card-1">
+                        <div class="car-img-container"><img style="width:325px;height:244px;" src=${field.img} alt="${field.brand} ${field.model}"></div>
+                        <p style="font-size:28px">${field.brand} ${field.model} (${field.model_year})</p>
+                        <p><b>Mileage: </b>${field.mileage}KM</p>
+                        <p><b>Fuel Type: </b>${field.fuel_type}</p>
+                        <p><b>Seats: </b>${field.seats}</p>
+                        <p><b>Price: </b>$${field.price_per_day} p/day</p>
+                        <br />
+                        <center><p><b>${field.availability}</b></p></center>
+                        <br />
+                        <p><b>Description: </b>${field.description}</p>
+                        <br /><br />
+                        <center>
+                            <button class="button button-add" onClick="addToReservation(${field.id})"><b>Add to Reservation</b></button>
+                        </center>
+                    </div>
+                  `;
+                  // Append each card component to car-list div used in body
+                  $(".car-list").append(carComponent);
+                });
+            });
+        });
+            
+        function addToReservation(id){
+            
+            let car = cars.find(car => car.id == id);
+            let res = reservation.find(car => car.id == id);
+            let message = `Sorry ${car.brand} ${car.model} is not available now. Please try other cars.`; // Car unavailable
+            if(res){
+                message = `You have already added ${res.brand} ${res.model} to your reservation.`; // Car already in reservation
+            } else if(car.availability == "Available"){ // Car available
+                reservation.push(car); // Car added to reservation
+                message = `${car.brand} ${car.model} added to reservation`;
+            }
+            alert(message);
+            return true;
+        }
+        
+        function checkReservation(){
+            window.sessionStorage.setItem("session_res", JSON.stringify(reservation));
+            window.location.href="reservation.html";
+        }
+        
+    </script>
